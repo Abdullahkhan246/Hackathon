@@ -1,0 +1,103 @@
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2196F3;
+  padding: 1rem 2rem;
+  color: white;
+}
+
+.navbar .logo {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.navbar .nav-links a {
+  margin-left: 1.5rem;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.navbar .nav-links a:hover {
+  text-decoration: underline;
+}
+
+/* Post card */
+.post-card {
+  background: white;
+  width: 700px;
+  margin: 2rem auto;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.user-avatar {
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.user-desc {
+  font-size: 0.85rem;
+  color: gray;
+}
+
+.post-title {
+  margin: 0.5rem 0 1rem;
+  color: #333;
+}
+
+.post-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post-image {
+  width: 500px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.vote-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #2196F3;
+  font-weight: bold;
+}
+
+.vote-btn span {
+  margin-top: 4px;
+}
+
+.vote-btn:hover {
+  color: #1976D2;
+}
+
+.post-footer {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.post-footer .actions span {
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.post-footer .actions span:hover {
+  color: #2196F3;
+}
