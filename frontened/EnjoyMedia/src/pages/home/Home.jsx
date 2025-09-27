@@ -1,19 +1,10 @@
 import React from 'react';
 import './home.css';
+import { Link } from 'react-router-dom';
 
 export default function Landing() {
   return (
     <div className="landing">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="logo">Enjoy Media</div>
-        <div className="nav-links">
-          <a href="#">Leaderboard</a>
-          <a href="#">Create Post</a>
-          <a href="#">Profile</a>
-        </div>
-      </nav>
-
       {/* Post */}
       <div className="post-card">
         <div className="post-header">
