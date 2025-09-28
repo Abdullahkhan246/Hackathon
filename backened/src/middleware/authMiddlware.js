@@ -27,7 +27,7 @@ module.exports = (req, res, next) => {
   if (!token) return res.status(401).json({ message: 'Invalid token format' });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
     
     // Ensure user object has the correct structure with id property
     req.user = {
