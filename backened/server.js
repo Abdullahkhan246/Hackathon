@@ -3,6 +3,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const postRoutes = require('./src/routes/postRoutes');
 
 const authRouter = require('./src/routes/authRoutes');
 const connection = require('./src/config/db'); // 👈 MongoDB connection import
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 
 // ✅ Routes
 app.use('/auth', authRouter);
+app.use('/api/posts', postRoutes);
 
 // ✅ Start server
 app.listen(port, () => {

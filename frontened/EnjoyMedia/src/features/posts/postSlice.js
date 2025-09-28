@@ -6,7 +6,7 @@ export const createPost = createAsyncThunk(
   'posts/createPost',
   async (postData, thunkAPI) => {
     try {
-      const res = await api.post('/posts', postData); // backend route will be /api/posts
+      const res = await api.post('/api/posts', postData); // backend route will be /api/posts
       return res.data; // expect { post: {...} }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || { message: err.message });
@@ -19,7 +19,7 @@ export const fetchPosts = createAsyncThunk(
   'posts/fetchPosts',
   async (_, thunkAPI) => {
     try {
-      const res = await api.get('/posts');
+      const res = await api.get('/api/posts');    
       return res.data; // expect { posts: [...] }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || { message: err.message });
@@ -32,7 +32,7 @@ export const updatePost = createAsyncThunk(
   'posts/updatePost',
   async ({ id, updates }, thunkAPI) => {
     try {
-      const res = await api.put(`/posts/${id}`, updates);
+      const res = await api.put(`/api/posts/${id}`, updates);
       return res.data; // expect { post: {...} }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || { message: err.message });
@@ -45,7 +45,7 @@ export const deletePost = createAsyncThunk(
   'posts/deletePost',
   async (id, thunkAPI) => {
     try {
-      await api.delete(`/posts/${id}`);
+      await api.delete(`/api/posts/${id}`); 
       return id;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || { message: err.message });
