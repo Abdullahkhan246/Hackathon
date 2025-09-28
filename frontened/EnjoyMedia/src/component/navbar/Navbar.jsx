@@ -11,7 +11,7 @@ export default function Navbar() {
           <Link to={"/home"} className='nav-links-item'>Home</Link>
           <Link to={"/leaderboard"} className='nav-links-item'>Leaderboard</Link>
           <Link to={"/createpost"} className='nav-links-item'>Create Post</Link>
-          <Link to={"/profile"} className='nav-links-item'>Profile</Link>
+          <Link to={"/postlist"} className='nav-links-item'>PostList</Link>
         </div>
       </nav>
     </div>

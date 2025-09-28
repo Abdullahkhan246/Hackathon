@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './home.css';
+import './leaderboard.css';
 
-// Mock data generator for testing
-const generateMockPosts = (count) => {
+// Mock data generator for leaderboard (same as Home.jsx but sorted by votes)
+const generateLeaderboardPosts = (count) => {
   const posts = [];
   const mediaTypes = ['image', 'video', 'text'];
   const sampleImages = [
@@ -82,68 +82,43 @@ const generateMockPosts = (count) => {
       media: mediaType === 'image' ? sampleImages[Math.floor(Math.random() * sampleImages.length)] : 
              mediaType === 'video' ? sampleVideos[Math.floor(Math.random() * sampleVideos.length)] : null,
       mediaType: mediaType,
-      upvotes: Math.floor(Math.random() * 100),
-      downvotes: Math.floor(Math.random() * 20),
-      likes: Math.floor(Math.random() * 50),
-      dislikes: Math.floor(Math.random() * 10),
-      comments: Math.floor(Math.random() * 25),
-      shares: Math.floor(Math.random() * 15),
+      upvotes: Math.floor(Math.random() * 200) + 50, // Higher votes for leaderboard
+      downvotes: Math.floor(Math.random() * 30),
+      likes: Math.floor(Math.random() * 100) + 20,
+      dislikes: Math.floor(Math.random() * 15),
+      comments: Math.floor(Math.random() * 50) + 10,
+      shares: Math.floor(Math.random() * 30) + 5,
       timestamp: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
     });
   }
-  return posts;
+  
+  // Sort by total score (upvotes - downvotes) for leaderboard
+  return posts.sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes));
 };
 
-export default function Home() {
+export default function LeaderBoard() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const [userVotes, setUserVotes] = useState({});
   const [userLikes, setUserLikes] = useState({});
   const [showComments, setShowComments] = useState({});
   const [commentTexts, setCommentTexts] = useState({});
 
-  const POSTS_PER_PAGE = 10;
-
-  // Load initial posts
+  // Load leaderboard posts
   useEffect(() => {
-    loadPosts(1);
+    loadLeaderboardPosts();
   }, []);
 
-  const loadPosts = useCallback(async (pageNum) => {
+  const loadLeaderboardPosts = useCallback(async () => {
     setLoading(true);
     
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    const newPosts = generateMockPosts(POSTS_PER_PAGE);
-    
-    if (pageNum === 1) {
-      setPosts(newPosts);
-    } else {
-      setPosts(prev => [...prev, ...newPosts]);
-    }
-    
-    setPage(pageNum);
-    setHasMore(pageNum < 5); // Simulate limited data
+    const leaderboardPosts = generateLeaderboardPosts(10); // Top 10 posts
+    setPosts(leaderboardPosts);
     setLoading(false);
   }, []);
-
-  // Infinite scroll handler
-  const handleScroll = useCallback(() => {
-    if (loading || !hasMore) return;
-    
-    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-    if (scrollTop + clientHeight >= scrollHeight - 1000) {
-      loadPosts(page + 1);
-    }
-  }, [loading, hasMore, page, loadPosts]);
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
 
   const handleVote = (postId, type) => {
     // Update post votes directly - no removing votes, just adding points
@@ -184,7 +159,7 @@ export default function Home() {
 
   const handleDislike = (postId) => {
     setUserLikes(prev => {
-      const isDisliked = prev[postId + '_dislike']; // Use different key for dislikes
+      const isDisliked = prev[postId + '_dislike'];
       return { ...prev, [postId + '_dislike']: !isDisliked };
     });
     
@@ -248,7 +223,6 @@ export default function Home() {
       [postId]: false
     }));
 
-    // You can add more comment functionality here (like storing comments)
     console.log(`Comment added to post ${postId}: ${commentText}`);
   };
 
@@ -270,135 +244,137 @@ export default function Home() {
   };
 
   return (
-    <div className="home-container">
+    <div className="leaderboard-container">
+      <div className="leaderboard-header">
+        <h1 className="leaderboard-title">Leading posts of today</h1>
+      </div>
       
-      <div className="posts-container">
-        {posts.map((post) => (
-          <div key={post.id} className="post-card">
-            {/* Post Header */}
-        <div className="post-header">
-          <img
-                src={post.user.avatar}
-                alt={post.user.name}
-            className="user-avatar"
-          />
-              <div className="user-info">
-                <h4 className="user-name">{post.user.name}</h4>
-                <p className="user-desc">{post.user.description}</p>
-                <span className="post-time">{formatTimeAgo(post.timestamp)}</span>
+      <div className="leaderboard-posts">
+        {loading ? (
+          <div className="loading">
+            <div className="spinner"></div>
+            <p>Loading leaderboard...</p>
           </div>
-        </div>
-
-            {/* Post Content */}
-            <div className="post-content">
-              <h2 className="post-title">{post.content}</h2>
+        ) : (
+          posts.map((post, index) => (
+            <div key={post.id} className="leaderboard-post-card">
+              {/* Ranking Badge */}
+              <div className="ranking-badge">
+                #{index + 1}
+              </div>
               
-              {/* Media */}
-              {post.media && (
-                <div className="post-media">
-                  {post.mediaType === 'image' ? (
-                    <img
-                      src={post.media}
-            alt="post"
-            className="post-image"
-          />
-                  ) : post.mediaType === 'video' ? (
-                    <video
-                      src={post.media}
-                      controls
-                      className="post-video"
+              {/* Post Header */}
+              <div className="post-header">
+                <img
+                  src={post.user.avatar}
+                  alt={post.user.name}
+                  className="user-avatar"
+                />
+                <div className="user-info">
+                  <h4 className="user-name">{post.user.name}</h4>
+                  <p className="user-desc">{post.user.description}</p>
+                  <span className="post-time">{formatTimeAgo(post.timestamp)}</span>
+                </div>
+              </div>
+
+              {/* Post Content */}
+              <div className="post-content">
+                <h2 className="post-title">{post.content}</h2>
+                
+                {/* Media */}
+                {post.media && (
+                  <div className="post-media">
+                    {post.mediaType === 'image' ? (
+                      <img
+                        src={post.media}
+                        alt="post"
+                        className="post-image"
+                      />
+                    ) : post.mediaType === 'video' ? (
+                      <video
+                        src={post.media}
+                        controls
+                        className="post-video"
+                      />
+                    ) : null}
+                  </div>
+                )}
+              </div>
+
+              {/* Voting Section */}
+              <div className="voting-section">
+                <button
+                  className={`vote-btn upvote ${userVotes[post.id] === 'upvote' ? 'active' : ''}`}
+                  onClick={() => handleVote(post.id, 'upvote')}
+                >
+                  ⬆ <span>{post.upvotes}</span>
+                </button>
+                <button
+                  className={`vote-btn downvote ${userVotes[post.id] === 'downvote' ? 'active' : ''}`}
+                  onClick={() => handleVote(post.id, 'downvote')}
+                >
+                  ⬇ <span>{post.downvotes}</span>
+                </button>
+              </div>
+
+              {/* Post Actions */}
+              <div className="post-actions">
+                <button
+                  className={`action-btn like ${userLikes[post.id] ? 'active' : ''}`}
+                  onClick={() => handleLike(post.id)}
+                >
+                  👍 <span>{post.likes}</span>
+                </button>
+                <button
+                  className={`action-btn dislike ${userLikes[post.id + '_dislike'] ? 'active' : ''}`}
+                  onClick={() => handleDislike(post.id)}
+                >
+                  👎 <span>{post.dislikes}</span>
+                </button>
+                <button
+                  className="action-btn comment"
+                  onClick={() => toggleComments(post.id)}
+                >
+                  💬 <span>{post.comments}</span>
+                </button>
+                <button
+                  className="action-btn share"
+                  onClick={() => handleShare(post.id)}
+                >
+                  🔗 <span>{post.shares}</span>
+                </button>
+              </div>
+
+              {/* Comments Section */}
+              {showComments[post.id] && (
+                <div className="comments-section">
+                  <div className="comment-input">
+                    <input
+                      type="text"
+                      placeholder="Write a comment..."
+                      className="comment-field"
+                      value={commentTexts[post.id] || ''}
+                      onChange={(e) => handleCommentChange(post.id, e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleCommentSubmit(post.id);
+                        }
+                      }}
                     />
-                  ) : null}
+                    <button 
+                      className="comment-submit"
+                      onClick={() => handleCommentSubmit(post.id)}
+                    >
+                      Post
+                    </button>
+                  </div>
+                  <div className="comments-list">
+                    <p className="no-comments">No comments yet. Be the first to comment!</p>
+                  </div>
                 </div>
               )}
             </div>
-
-            {/* Voting Section */}
-            <div className="voting-section">
-              <button
-                className={`vote-btn upvote ${userVotes[post.id] === 'upvote' ? 'active' : ''}`}
-                onClick={() => handleVote(post.id, 'upvote')}
-              >
-                ⬆ <span>{post.upvotes}</span>
-              </button>
-              <button
-                className={`vote-btn downvote ${userVotes[post.id] === 'downvote' ? 'active' : ''}`}
-                onClick={() => handleVote(post.id, 'downvote')}
-              >
-                ⬇ <span>{post.downvotes}</span>
-              </button>
-          </div>
-
-            {/* Post Actions */}
-            <div className="post-actions">
-              <button
-                className={`action-btn like ${userLikes[post.id] ? 'active' : ''}`}
-                onClick={() => handleLike(post.id)}
-              >
-                👍 <span>{post.likes}</span>
-              </button>
-              <button
-                className={`action-btn dislike ${userLikes[post.id + '_dislike'] ? 'active' : ''}`}
-                onClick={() => handleDislike(post.id)}
-              >
-                👎 <span>{post.dislikes}</span>
-              </button>
-              <button
-                className="action-btn comment"
-                onClick={() => toggleComments(post.id)}
-              >
-                💬 <span>{post.comments}</span>
-              </button>
-              <button
-                className="action-btn share"
-                onClick={() => handleShare(post.id)}
-              >
-                🔗 <span>{post.shares}</span>
-              </button>
-        </div>
-
-            {/* Comments Section */}
-            {showComments[post.id] && (
-              <div className="comments-section">
-                <div className="comment-input">
-                  <input
-                    type="text"
-                    placeholder="Write a comment..."
-                    className="comment-field"
-                    value={commentTexts[post.id] || ''}
-                    onChange={(e) => handleCommentChange(post.id, e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        handleCommentSubmit(post.id);
-                      }
-                    }}
-                  />
-                  <button 
-                    className="comment-submit"
-                    onClick={() => handleCommentSubmit(post.id)}
-                  >
-                    Post
-                  </button>
-          </div>
-                <div className="comments-list">
-                  <p className="no-comments">No comments yet. Be the first to comment!</p>
-          </div>
-        </div>
-            )}
-          </div>
-        ))}
-        
-        {loading && (
-          <div className="loading">
-            <div className="spinner"></div>
-            <p>Loading more posts...</p>
-          </div>
-        )}
-        
-        {!hasMore && (
-          <div className="no-more-posts">
-            <p>No more posts to load</p>
-          </div>
+          ))
         )}
       </div>
     </div>
