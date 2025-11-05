@@ -17,7 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // ✅ CORS setup
 app.use(cors({
-  origin: 'http://localhost:5173', // frontend ka URL (Vite dev server)
+  origin: 'http://localhost:5173',
+  origin: 'https://hackathon-smoky-psi.vercel.app', // frontend ka URL (Vite dev server)
   credentials: true               // agar cookies/tokens bhejne ho to
 }));
 
@@ -37,3 +38,4 @@ app.use('/api/posts', postRoutes);
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
+
